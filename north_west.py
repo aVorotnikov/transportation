@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def generate_initial(a, b):
     x = np.zeros((len(a), len(b)))
     b0 = np.copy(b)
