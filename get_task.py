@@ -28,4 +28,4 @@ def get_task(file_name):
             if not c_text:
                 raise Exception("No cost line #" + str(i))
             c_matr.append([float(c_i) for c_i in c_text.strip().split(' ')])
-        return (a, b, np.matrix(c_matr))
+        return a, b, np.matrix(c_matr)
