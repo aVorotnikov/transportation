@@ -14,12 +14,12 @@ def get_task(file_name):
     with open(file_name, 'r') as file:
         a_text = skip_comments(file)
         if not a_text:
-            raise Exception("No need")
+            raise Exception("No resources")
         a = np.array([float(a_i) for a_i in a_text.strip().split(' ')])
 
         b_text = skip_comments(file)
         if not b_text:
-            raise Exception("No suppliers")
+            raise Exception("No needs")
         b = np.array([float(b_i) for b_i in b_text.strip().split(' ')])
 
         c_matr = []
