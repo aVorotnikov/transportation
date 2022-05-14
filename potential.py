@@ -1,14 +1,15 @@
 import numpy as np
+import copy
 
 
 def check_end(x, c, u, v):
     for i in range(0, len(x)):
         for j in range(0, len(x[i])):
             if x[i][j] is None:
-                if v[j] - u[i] > c[i][j]:
+                if v[j] - u[i] > c.item(i, j):
                     return False
             else:
-                if v[j] - u[i] != c[i][j]:
+                if v[j] - u[i] != c.item(i, j):
                     return False
     return True
 
@@ -22,7 +23,7 @@ def finalize(x):
 
 
 def optimize(x_initial, a, b, c):
-    x = np.copy(x_initial)
+    x = copy.deepcopy(x_initial)
     u = np.zeros(len(a))
     v = np.zeros(len(b))
     while not check_end(x, c, u, v):
