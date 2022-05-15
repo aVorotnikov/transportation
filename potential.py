@@ -1,5 +1,13 @@
 import numpy as np
+
 import copy
+import enum
+
+
+class EndType(enum.Enum):
+    NONE = -1
+    HORZ = 0
+    VERT = 1
 
 
 def get_potentials(x, a, b, c):
@@ -29,8 +37,66 @@ def get_potentials(x, a, b, c):
     return u, v
 
 
-def get_shortest_loop(x, c, beginning):
-    return []
+def get_pos_on_row(x, rec_lvls, pos_row,  pos_column):
+    result = []
+    for j in range(0, len(x[pos_row])):
+        if x[pos_row][j] is not None and rec_lvls[pos_row][j] is None and j != pos_column:
+            result.append([pos_row, j])
+    return result
+
+
+def get_pos_on_column(x, rec_lvls, pos_row,  pos_column):
+    result = []
+    for i in range(0, len(x)):
+        if x[i][pos_column] is not None and rec_lvls[i][pos_column] is None and i != pos_row:
+            result.append([i, pos_column])
+
+    return result
+
+
+def check_beginning_near(rec_lvls, pos_row, pos_column, rec_lvl):
+    if rec_lvl < 3:
+        return False
+
+    for i in range(0, len(rec_lvls[pos_row])):
+        if rec_lvls[pos_row][i] == 0 and i != pos_column:
+            return True
+
+    for i in range(0, len(rec_lvls)):
+        if rec_lvls[i][pos_column] == 0 and i != pos_row:
+            return True
+
+    return False
+
+
+def get_shortest_rec(x, rec_lvls, cur_point, from_where, rec_lvl, shortest_loop, cur_loop):
+    rec_lvls[cur_point[0]][cur_point[1]] = rec_lvl
+    cur_loop.append(cur_point)
+
+    if check_beginning_near(rec_lvls, cur_point[0], cur_point[1], rec_lvl) and (len(shortest_loop) == 0 or len(shortest_loop) > len(cur_loop)):
+        shortest_loop.clear()
+        for cell in cur_loop:
+            shortest_loop.append(cell)
+    elif len(shortest_loop) == 0 or len(shortest_loop) > rec_lvl:
+        if from_where != EndType.HORZ:
+            ways = get_pos_on_row(x, rec_lvls, cur_point[0], cur_point[1])
+            for way in ways:
+                get_shortest_rec(x, rec_lvls, way, EndType.HORZ, rec_lvl + 1, shortest_loop, cur_loop)
+        if from_where != EndType.VERT:
+            ways = get_pos_on_column(x, rec_lvls, cur_point[0], cur_point[1])
+            for way in ways:
+                get_shortest_rec(x, rec_lvls, way, EndType.VERT, rec_lvl + 1, shortest_loop, cur_loop)
+
+    rec_lvls[cur_point[0]][cur_point[1]] = None
+    cur_loop.pop(len(cur_loop) - 1)
+
+
+def get_shortest_loop(x, beginning):
+    rec_lvls = [[None for j in range(0, len(x[i]))] for i in range(0, len(x))]
+    shortest_loop = []
+    cur_loop = []
+    get_shortest_rec(x, rec_lvls, beginning, EndType.NONE, 0, shortest_loop, cur_loop)
+    return shortest_loop
 
 
 def get_next(x, a, b, c):
@@ -84,6 +150,6 @@ def optimize(x_initial, a, b, c):
     x = copy.deepcopy(x_initial)
     cell = get_next(x, a, b, c)
     while cell:
-        correct(x, get_shortest_loop(x, c, cell))
+        correct(x, get_shortest_loop(x, cell))
         cell = get_next(x, a, b, c)
     return finalize(x)
