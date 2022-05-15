@@ -29,6 +29,10 @@ def get_potentials(x, a, b, c):
     return u, v
 
 
+def get_shortest_loop(x, c, beginning):
+    return []
+
+
 def get_next(x, a, b, c):
     u, v = get_potentials(x, a, b, c)
     delta = -1
@@ -39,6 +43,33 @@ def get_next(x, a, b, c):
                 delta = v[j] - u[i] - c.item(i, j)
                 newStart = (i, j)
     return newStart
+
+
+def get_loop_min(x, loop):
+    min = None
+    num = 0
+    for cell in loop:
+        i, j = cell
+        if x[i][j] is not None and num % 2 == 1 and (min is None or x[i][j] < min):
+            min = x[i][j]
+        num += 1
+    return min
+
+
+def correct(x, loop):
+    sign = 1
+    min = get_loop_min(x, loop)
+    was_new_zero = False
+    for cell in loop:
+        i, j = cell
+        if x[i][j] is None:
+            x[i][j] = min
+        else:
+            x[i][j] = x[i][j] + sign * min
+            if x[i][j] == 0 and not was_new_zero:
+                was_new_zero = True
+                x[i][j] = None
+        sign *= -1
 
 
 def finalize(x):
@@ -53,5 +84,6 @@ def optimize(x_initial, a, b, c):
     x = copy.deepcopy(x_initial)
     cell = get_next(x, a, b, c)
     while cell:
+        correct(x, get_shortest_loop(x, c, cell))
         cell = get_next(x, a, b, c)
     return finalize(x)
