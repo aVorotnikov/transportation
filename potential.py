@@ -150,6 +150,11 @@ def optimize(x_initial, a, b, c):
     x = copy.deepcopy(x_initial)
     cell = get_next(x, a, b, c)
     while cell:
-        correct(x, get_shortest_loop(x, cell))
+        loop = get_shortest_loop(x, cell)
+        print("Loop: ", end="")
+        for cell in loop:
+            print(cell, "->", end=" ")
+        print(loop[0])
+        correct(x, loop)
         cell = get_next(x, a, b, c)
     return finalize(x)
