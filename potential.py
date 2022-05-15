@@ -29,16 +29,16 @@ def get_potentials(x, a, b, c):
     return u, v
 
 
-def check_end(x, c, u, v):
+def get_next(x, a, b, c):
+    u, v = get_potentials(x, a, b, c)
+    delta = -1
+    newStart = None
     for i in range(0, len(x)):
         for j in range(0, len(x[i])):
-            if x[i][j] is None:
-                if v[j] - u[i] > c.item(i, j):
-                    return False
-            else:
-                if v[j] - u[i] != c.item(i, j):
-                    return False
-    return True
+            if x[i][j] is None and v[j] - u[i] > c.item(i, j) and v[j] - u[i] - c.item(i, j) > delta:
+                delta = v[j] - u[i] - c.item(i, j)
+                newStart = (i, j)
+    return newStart
 
 
 def finalize(x):
@@ -51,7 +51,7 @@ def finalize(x):
 
 def optimize(x_initial, a, b, c):
     x = copy.deepcopy(x_initial)
-    u, v = get_potentials(x, a, b, c)
-    while not check_end(x, c, u, v):
-        pass
+    cell = get_next(x, a, b, c)
+    while cell:
+        cell = get_next(x, a, b, c)
     return finalize(x)
