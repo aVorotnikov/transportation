@@ -25,17 +25,20 @@ try:
     x = optimize(x_initial, a, b, c)
     print("Result:\n", x)
     sum = 0
-    for i in range(0, len(x)):
-        for j in range(0, len(x[i])):
+    for i in range(0, x.shape[0]):
+        for j in range(0, x.shape[1]):
             sum += x.item(i, j) * c.item(i, j)
     print("Total: ", sum)
     print("BRUTE-FORCE")
     c_canon, a_canon, b_canon = make_canon(a, b, c)
     a_canon.pop(len(a_canon) - 1)
     b_canon.pop(len(b_canon) - 1)
-    sol, function = solve_brute_force(a_canon, b_canon, c_canon)
-    sol = np.reshape(sol, (len(a), len(b)))
-    print("Result:\n", sol)
+    sol = solve_brute_force(a_canon, b_canon, c_canon)
+    x = np.reshape(sol, (len(a), len(b)))
+    # i = 0
+    # for i in range(0, len(sol)):
+    #     x[i // len(b), i % len(b)] = sol[i]
+    print("Result:\n", x)
     sum = 0
     for i in range(0, len(x)):
         for j in range(0, len(x[i])):

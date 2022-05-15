@@ -1,65 +1,56 @@
-import numpy as np
 from itertools import combinations
+import numpy as np
 
-EPS = 1e-16
+EPS = 0.000000001
 
+def get_basis_matrs(A : np.ndarray):
+    N = A.shape[0]
+    M = A.shape[1]
 
-def get_basis_matrices(A):
-    M, N = A.shape
     basis_matrs = []
     basis_combinations_indexes = []
+    all_indexes = [i for i in range(M)]
 
-    for i in combinations(range(N), M):
+    for i in combinations(all_indexes, N):
         basis_matr = A[:, i]
-        if abs(np.linalg.det(basis_matr)) > 1e-12:
+        if np.linalg.det(basis_matr) != 0:
             basis_matrs.append(basis_matr)
             basis_combinations_indexes.append(i)
-
+     
     return basis_matrs, basis_combinations_indexes
 
-
-def get_vectors(A, b):
-    M, N = A.shape
+def get_all_possible_vectors(A : list, b : list):
+    N = len(A[0])
+    M = len(A)
     vectors = []
 
     if M >= N:
         return vectors
+    else:
+        basis_matrs, basis_combinations_indexes = get_basis_matrs(np.array(A))
 
-    for matrix, indexes in zip(*get_basis_matrices(A)):
-        sol = np.linalg.solve(matrix, b)
-        if any(sol < -EPS) or any(sol > 1e16):
+    for i in range(len(basis_matrs)):
+        solve = np.linalg.solve(basis_matrs[i], b)
+        if (len(solve[solve < -1 * EPS]) != 0) or (len(solve[solve > 1e+15]) != 0):
             continue
 
-        vec = np.zeros((N, ))
-        for i, index in enumerate(indexes):
-            vec[index] = sol[i]
+        vec = [0 for i in range(N)]
+        for j in range(len(basis_combinations_indexes[i])):
+            vec[basis_combinations_indexes[i][j]] = solve[j]
         vectors.append(vec)
     return vectors
 
-
-def get_canonical(A, b, c):
-    m = len(b)
-    return np.concatenate((A, np.eye(m)), axis=1), b, np.pad(c, (0, m))
-
-
-def solve_brute_force(A_in, b_in, c_in):
-    n = len(c_in)
-    A, b, c = get_canonical(A_in, b_in, c_in)
-
-    from scipy.optimize import linprog
-    res = linprog(-c, A_eq=A, b_eq=b, bounds=[(0, None)]*len(c))
-    print(f'Scipy solution: {res.x, -res.fun}')
-
-    vectors = get_vectors(A, b)
-    if not vectors:
-        return None
+def solve_brute_force(A : list, b : list, c : list):
+    vectors = get_all_possible_vectors(A, b)
+    if len(vectors) == 0:
+        return []
 
     solution = vectors[0]
-    target_max = np.dot(solution, c)
+    target_min = np.dot(solution, c)
 
     for vec in vectors:
-        if np.dot(vec, c) > target_max:
-            target_max = np.dot(vec, c)
+        if np.dot(vec, c) < target_min:
+            target_min = np.dot(vec, c)
             solution = vec
 
-    return solution[:n], target_max
+    return solution
