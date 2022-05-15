@@ -34,9 +34,8 @@ try:
     a_canon.pop(len(a_canon) - 1)
     b_canon.pop(len(b_canon) - 1)
     sol, function = solve_brute_force(a_canon, b_canon, c_canon)
-    print("Result:\n", x)
     sol = np.reshape(sol, (len(a), len(b)))
-    print(sol)
+    print("Result:\n", sol)
     sum = 0
     for i in range(0, len(x)):
         for j in range(0, len(x[i])):
