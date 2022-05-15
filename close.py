@@ -7,19 +7,19 @@ def close(a, b, c):
     B = sum(b)
     if A == B:
         print("Already closed")
-        return
-    if A > B:
+        return a, b, c
+    if A < B:
         print("Need more resources")
         row = np.array([VERI_BIG_NUMBER for i in range(0, len(b))])
         c = np.vstack([c, row])
-        a = np.append(a, A - B)
+        a = np.append(a, B - A)
         print("Resources: ", a)
         print("Costs:\n", c)
-        return
+        return a, b, c
     print("Need more needs")
     column = np.array([VERI_BIG_NUMBER for i in range(0, len(a))])
     c = np.hstack([c, np.atleast_2d(column).T])
-    b = np.append(b, B - A)
+    b = np.append(b, A - B)
     print("Needs: ", b)
     print("Costs:\n", c)
-    return
+    return a, b, c

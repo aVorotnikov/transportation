@@ -2,10 +2,7 @@ import numpy as np
 
 
 def generate_initial(a, b):
-    x = []
-    for i in range(0, len(a)):
-        row = [None for i in range(0, len(b))]
-        x.append(row)
+    x = [[None for j in range(0, len(b))] for i in range(0, len(a))]
     b0 = np.copy(b)
 
     for need in range(0, len(a)):

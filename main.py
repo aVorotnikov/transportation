@@ -13,12 +13,12 @@ import numpy as np
 
 try:
     print("GETTING TASK")
-    a, b, c = get_task("task.txt")
+    a, b, c = get_task("tasks/second.txt")
     print("Resources: ", a)
     print("Needs: ", b)
     print("Costs:\n", c)
     print("CLOSING TASK")
-    close(a, b, c)
+    a, b, c = close(a, b, c)
     print("CHAINS")
     x_initial = generate_initial(a, b)
     print("Initial matrix:\n", x_initial)
