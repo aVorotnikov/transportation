@@ -41,7 +41,7 @@ def get_pos_on_row(x, rec_lvls, pos_row,  pos_column):
     result = []
     for j in range(0, len(x[pos_row])):
         if x[pos_row][j] is not None and rec_lvls[pos_row][j] is None and j != pos_column:
-            result.append([pos_row, j])
+            result.append((pos_row, j))
     return result
 
 
@@ -49,7 +49,7 @@ def get_pos_on_column(x, rec_lvls, pos_row,  pos_column):
     result = []
     for i in range(0, len(x)):
         if x[i][pos_column] is not None and rec_lvls[i][pos_column] is None and i != pos_row:
-            result.append([i, pos_column])
+            result.append((i, pos_column))
 
     return result
 
