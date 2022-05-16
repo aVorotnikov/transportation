@@ -156,5 +156,6 @@ def optimize(x_initial, a, b, c):
             print(cell, "->", end=" ")
         print(loop[0])
         correct(x, loop)
+        print(x)
         cell = get_next(x, a, b, c)
     return finalize(x)
